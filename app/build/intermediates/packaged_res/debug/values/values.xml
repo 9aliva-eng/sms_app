@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="color_background">#F5F5F5</color>
+    <color name="color_divider">#E0E0E0</color>
+    <color name="color_on_primary">#FFFFFF</color>
+    <color name="color_on_surface">#212121</color>
+    <color name="color_on_surface_secondary">#757575</color>
+    <color name="color_primary">#1565C0</color>
+    <color name="color_primary_variant">#003c8f</color>
+    <color name="color_start">#2E7D32</color>
+    <color name="color_stop">#C62828</color>
+    <color name="color_surface">#FFFFFF</color>
+    <color name="color_warning">#F57F17</color>
+    <color name="dot_green">#4CAF50</color>
+    <color name="dot_red">#F44336</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="all_sims_exhausted">Все SIM исчерпаны!</string>
+    <string name="app_name">SMS Рассылка</string>
+    <string name="btn_refresh">Обновить</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="btn_start">СТАРТ</string>
+    <string name="btn_stop">СТОП</string>
+    <string name="btn_stop_all">Остановить всё</string>
+    <string name="error_send_permission">Нет разрешения на отправку SMS</string>
+    <string name="mode_admin">Режим: АДМИН</string>
+    <string name="mode_agent">Режим: АГЕНТ</string>
+    <string name="nav_main">Главная</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="notification_channel_description">Фоновая работа SMS рассылки</string>
+    <string name="notification_channel_name">SMS Рассылка</string>
+    <string name="sent_today">Отправлено сегодня: 0</string>
+    <string name="settings_not_configured">Сначала заполните Настройки!</string>
+    <string name="settings_saved">Настройки сохранены</string>
+    <string name="sim1">SIM1</string>
+    <string name="sim2">SIM2</string>
+    <string name="sim_auto">АВТО</string>
+    <string name="status_running">Работает...</string>
+    <string name="status_stopped">Остановлено</string>
+    <style name="Theme.SmsApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
+        <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="android:statusBarColor">@color/color_primary</item>
+    </style>
+</resources>

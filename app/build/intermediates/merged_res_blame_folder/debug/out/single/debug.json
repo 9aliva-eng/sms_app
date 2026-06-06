@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "com.smsapp-merged_res-45:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.smsapp-main-47:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/layout_item_agent.xml.flat",
+        "source": "com.smsapp-main-47:/layout/item_agent.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/drawable_dot_red.xml.flat",
+        "source": "com.smsapp-main-47:/drawable/dot_red.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/layout_activity_main.xml.flat",
+        "source": "com.smsapp-main-47:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/drawable_dot_green.xml.flat",
+        "source": "com.smsapp-main-47:/drawable/dot_green.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/menu_menu_main.xml.flat",
+        "source": "com.smsapp-main-47:/menu/menu_main.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/layout_fragment_admin.xml.flat",
+        "source": "com.smsapp-main-47:/layout/fragment_admin.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/xml_data_extraction_rules.xml.flat",
+        "source": "com.smsapp-main-47:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/layout_fragment_settings.xml.flat",
+        "source": "com.smsapp-main-47:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/xml_backup_rules.xml.flat",
+        "source": "com.smsapp-main-47:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/layout_fragment_agent.xml.flat",
+        "source": "com.smsapp-main-47:/layout/fragment_agent.xml"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.smsapp-merged_res-45:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.smsapp-main-47:/mipmap-xhdpi/ic_launcher.png"
+    }
+]

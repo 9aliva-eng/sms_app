@@ -1,0 +1,4 @@
+com.smsapp.test.app-androidTest-0 H:\sms_app_v1.9\sms_app\app\build\generated\res\resValues\androidTest\debug
+com.smsapp.test.app-mergeDebugAndroidTestResources-1 H:\sms_app_v1.9\sms_app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.smsapp.test.app-mergeDebugAndroidTestResources-2 H:\sms_app_v1.9\sms_app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.smsapp.test.app-merged_res-3 H:\sms_app_v1.9\sms_app\app\build\intermediates\merged_res\debugAndroidTest

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary brand color -->
+    <color name="color_primary">#1565C0</color>
+    <color name="color_primary_variant">#003c8f</color>
+    <color name="color_on_primary">#FFFFFF</color>
+
+    <!-- Background / surface -->
+    <color name="color_background">#F5F5F5</color>
+    <color name="color_surface">#FFFFFF</color>
+    <color name="color_on_surface">#212121</color>
+    <color name="color_on_surface_secondary">#757575</color>
+    <color name="color_divider">#E0E0E0</color>
+
+    <!-- Action colors -->
+    <color name="color_start">#2E7D32</color>   <!-- green -->
+    <color name="color_stop">#C62828</color>    <!-- red -->
+    <color name="color_warning">#F57F17</color> <!-- amber -->
+
+    <!-- Status dot -->
+    <color name="dot_green">#4CAF50</color>
+    <color name="dot_red">#F44336</color>
+
+    <!-- Compat (required by some Material widgets) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

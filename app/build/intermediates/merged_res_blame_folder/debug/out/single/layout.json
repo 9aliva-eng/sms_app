@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "com.smsapp-mergeDebugResources-44:/layout/item_agent.xml",
+        "source": "com.smsapp-main-47:/layout/item_agent.xml"
+    },
+    {
+        "merged": "com.smsapp-mergeDebugResources-44:/layout/fragment_agent.xml",
+        "source": "com.smsapp-main-47:/layout/fragment_agent.xml"
+    },
+    {
+        "merged": "com.smsapp-mergeDebugResources-44:/layout/activity_main.xml",
+        "source": "com.smsapp-main-47:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.smsapp-mergeDebugResources-44:/layout/fragment_settings.xml",
+        "source": "com.smsapp-main-47:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.smsapp-mergeDebugResources-44:/layout/fragment_admin.xml",
+        "source": "com.smsapp-main-47:/layout/fragment_admin.xml"
+    }
+]
