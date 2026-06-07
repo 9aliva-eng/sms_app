@@ -23,6 +23,9 @@ public final class FragmentAgentBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
+  public final Button btnResetStats;
+
+  @NonNull
   public final Button btnStartStop;
 
   @NonNull
@@ -55,12 +58,13 @@ public final class FragmentAgentBinding implements ViewBinding {
   @NonNull
   public final TextView tvStatus;
 
-  private FragmentAgentBinding(@NonNull ScrollView rootView, @NonNull Button btnStartStop,
-      @NonNull View indicatorDot, @NonNull RadioButton rbSim1, @NonNull RadioButton rbSim2,
-      @NonNull RadioButton rbSimAuto, @NonNull RadioGroup rgSimMode, @NonNull TextView tvPhoneName,
-      @NonNull TextView tvSentCount, @NonNull TextView tvSim1Sent, @NonNull TextView tvSim2Sent,
-      @NonNull TextView tvStatus) {
+  private FragmentAgentBinding(@NonNull ScrollView rootView, @NonNull Button btnResetStats,
+      @NonNull Button btnStartStop, @NonNull View indicatorDot, @NonNull RadioButton rbSim1,
+      @NonNull RadioButton rbSim2, @NonNull RadioButton rbSimAuto, @NonNull RadioGroup rgSimMode,
+      @NonNull TextView tvPhoneName, @NonNull TextView tvSentCount, @NonNull TextView tvSim1Sent,
+      @NonNull TextView tvSim2Sent, @NonNull TextView tvStatus) {
     this.rootView = rootView;
+    this.btnResetStats = btnResetStats;
     this.btnStartStop = btnStartStop;
     this.indicatorDot = indicatorDot;
     this.rbSim1 = rbSim1;
@@ -101,6 +105,12 @@ public final class FragmentAgentBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnResetStats;
+      Button btnResetStats = ViewBindings.findChildViewById(rootView, id);
+      if (btnResetStats == null) {
+        break missingId;
+      }
+
       id = R.id.btnStartStop;
       Button btnStartStop = ViewBindings.findChildViewById(rootView, id);
       if (btnStartStop == null) {
@@ -167,8 +177,9 @@ public final class FragmentAgentBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentAgentBinding((ScrollView) rootView, btnStartStop, indicatorDot, rbSim1,
-          rbSim2, rbSimAuto, rgSimMode, tvPhoneName, tvSentCount, tvSim1Sent, tvSim2Sent, tvStatus);
+      return new FragmentAgentBinding((ScrollView) rootView, btnResetStats, btnStartStop,
+          indicatorDot, rbSim1, rbSim2, rbSimAuto, rgSimMode, tvPhoneName, tvSentCount, tvSim1Sent,
+          tvSim2Sent, tvStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

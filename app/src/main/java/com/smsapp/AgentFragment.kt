@@ -14,6 +14,7 @@ import com.smsapp.databinding.FragmentAgentBinding
  *  - Counter "sent today"
  *  - Status label
  *  - SIM mode selector (AUTO / SIM1 / SIM2)
+ *  - Reset stats button
  */
 class AgentFragment : Fragment() {
 
@@ -89,6 +90,13 @@ class AgentFragment : Fragment() {
                 }
                 requireContext().startForegroundService(SmsService.startIntent(requireContext()))
             }
+        }
+
+        // ── Reset stats button ────────────────────────────────────────────
+        binding.btnResetStats.setOnClickListener {
+            SmsServiceState.sim1Sent.postValue(0)
+            SmsServiceState.sim2Sent.postValue(0)
+            Toast.makeText(context, "Статистика сброшена", Toast.LENGTH_SHORT).show()
         }
 
         // Set phone name label

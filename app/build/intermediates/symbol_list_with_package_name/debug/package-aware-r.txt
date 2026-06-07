@@ -1434,6 +1434,7 @@ color foreground_material_dark
 color foreground_material_light
 color highlighted_text_material_dark
 color highlighted_text_material_light
+color ic_launcher_background
 color m3_appbar_overlay_color
 color m3_assist_chip_icon_tint_color
 color m3_assist_chip_stroke_color
@@ -3201,6 +3202,7 @@ id bounceBoth
 id bounceEnd
 id bounceStart
 id btnRefresh
+id btnResetStats
 id btnSave
 id btnStartStop
 id btnStopAll
@@ -3833,6 +3835,7 @@ layout support_simple_spinner_dropdown_item
 menu bottom_nav_menu
 menu menu_main
 mipmap ic_launcher
+mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 plurals mtrl_badge_content_description
 string abc_action_bar_home_description
