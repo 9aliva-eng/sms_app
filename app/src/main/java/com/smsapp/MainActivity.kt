@@ -13,16 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.smsapp.databinding.ActivityMainBinding
 
-/**
- * Single-activity host. Swaps between AgentFragment, AdminFragment, SettingsFragment.
- * Navigation is driven by the bottom navigation bar or the settings toolbar item.
- */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: PreferencesManager
-
-    // ─── Permission request ───────────────────────────────────────────────────
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -36,8 +30,6 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +50,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Show Settings first if not configured
         if (!prefs.isConfigured()) {
             showFragment(SettingsFragment(), "Настройки")
             binding.bottomNav.selectedItemId = R.id.nav_settings
         } else {
             showMainScreen()
+
+            // ── Запускаем фоновый Worker для удалённого управления ──────
+            AgentCheckWorker.schedule(this)
         }
     }
 
@@ -81,8 +75,6 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
 
     private fun showMainScreen() {
         if (prefs.isAdminMode) {

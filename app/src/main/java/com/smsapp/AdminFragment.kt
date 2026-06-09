@@ -13,12 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * Admin screen:
- *  - List of all active agents with SIM status
- *  - Overall campaign progress (sent / total)
- *  - "Stop all" button (sets all agents to "остановлен" in Sheets)
- */
 class AdminFragment : Fragment() {
 
     private var _binding: FragmentAdminBinding? = null
@@ -36,8 +30,13 @@ class AdminFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prefs   = PreferencesManager(requireContext())
-        adapter = AgentAdapter()
+        prefs = PreferencesManager(requireContext())
+
+        // Адаптер с двумя коллбэками: Старт и Стоп
+        adapter = AgentAdapter(
+            onStartClick = { agent -> startAgent(agent) },
+            onStopClick  = { agent -> stopAgent(agent) }
+        )
 
         binding.rvAgents.layoutManager = LinearLayoutManager(requireContext())
         binding.rvAgents.adapter = adapter
@@ -54,22 +53,19 @@ class AdminFragment : Fragment() {
             return
         }
         binding.progressBar.visibility = View.VISIBLE
-        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey)
+        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey, prefs.scriptUrl)
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Load agents
                 val agentsResult = withContext(Dispatchers.IO) { repo.getAllAgents() }
                 val agents = agentsResult.getOrDefault(emptyList())
                 adapter.submitList(agents)
 
-                // Load overall progress
                 val stats = withContext(Dispatchers.IO) { repo.getRecipientStats() }
                 val sent  = stats[Recipient.STATUS_SENT] ?: 0
                 val total = stats.values.sum()
                 binding.tvProgress.text = "Прогресс: $sent / $total"
 
-                // Show active agents count
                 val active = agents.count { it.agentStatus == Agent.STATUS_ACTIVE }
                 binding.tvActiveAgents.text = "Активных агентов: $active"
 
@@ -84,10 +80,62 @@ class AdminFragment : Fragment() {
         }
     }
 
+    // ─── Старт агента ───────────────────────────────────────────────────
+    private fun startAgent(agent: Agent) {
+        if (!prefs.isConfigured()) return
+        binding.progressBar.visibility = View.VISIBLE
+        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey, prefs.scriptUrl)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    repo.updateAgentStats(
+                        agent.rowIndex,
+                        agent.sim1Sent,
+                        agent.sim2Sent,
+                        Agent.STATUS_ACTIVE  // устанавливаем "активен"
+                    )
+                }
+                Toast.makeText(context, "Команда «Старт» отправлена агенту ${agent.name}", Toast.LENGTH_SHORT).show()
+                loadData()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+    }
+
+    // ─── Стоп агента ────────────────────────────────────────────────────
+    private fun stopAgent(agent: Agent) {
+        if (!prefs.isConfigured()) return
+        binding.progressBar.visibility = View.VISIBLE
+        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey, prefs.scriptUrl)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    repo.updateAgentStats(
+                        agent.rowIndex,
+                        agent.sim1Sent,
+                        agent.sim2Sent,
+                        Agent.STATUS_STOPPED  // устанавливаем "остановлен"
+                    )
+                }
+                Toast.makeText(context, "Команда «Стоп» отправлена агенту ${agent.name}", Toast.LENGTH_SHORT).show()
+                loadData()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+    }
+
     private fun stopAllAgents() {
         if (!prefs.isConfigured()) return
         binding.progressBar.visibility = View.VISIBLE
-        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey)
+        val repo = SheetsRepository(prefs.sheetsId, prefs.apiKey, prefs.scriptUrl)
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {

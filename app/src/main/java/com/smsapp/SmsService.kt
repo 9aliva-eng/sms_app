@@ -10,14 +10,6 @@ import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.*
 import kotlin.random.Random
 
-/**
- * Foreground service that drives the SMS sending loop.
- *
- * - Runs two coroutines (one per SIM) depending on [SimMode].
- * - Reads campaign settings and recipients from Google Sheets.
- * - Respects UTC+9 time window, per-hour rate limit, and random intervals.
- * - Broadcasts [ServiceEvent] objects via [SmsServiceState] singleton LiveData.
- */
 class SmsService : Service() {
 
     companion object {
@@ -41,7 +33,6 @@ class SmsService : Service() {
     private lateinit var wakeLock: PowerManager.WakeLock
     private var agentRowIndex: Int = -1
 
-    // Per-SIM sent counters (session totals)
     @Volatile private var sim1Sent = 0
     @Volatile private var sim2Sent = 0
 
@@ -77,15 +68,13 @@ class SmsService : Service() {
 
     private fun startForegroundAndWork() {
         startForeground(NOTIFICATION_ID, buildNotification("Инициализация..."))
-        wakeLock.acquire(10 * 60 * 60 * 1000L) // max 10 hours
+        wakeLock.acquire(10 * 60 * 60 * 1000L)
 
         SmsServiceState.isRunning.postValue(true)
         SmsServiceState.sim1Sent.postValue(0)
         SmsServiceState.sim2Sent.postValue(0)
-        // при необходимости позже сюда добавим сброс sim1Active/sim2Active
 
         serviceScope.launch {
-            // Ensure agent row exists in Sheets
             val repo = buildRepository() ?: run {
                 postNotification("Ошибка: настройки не заданы")
                 stopSelf()
@@ -100,6 +89,18 @@ class SmsService : Service() {
             }
             agentRowIndex = rowResult.getOrDefault(2)
 
+            // ── Запускаем наблюдатель статуса (каждые 10 секунд) ─────────
+            val statusWatcher = launch { watchAdminCommands(repo) }
+
+            // ── Проверяем, не остановлен ли агент из админки ────────────
+            if (repo.isAgentStopped(agentRowIndex)) {
+                postNotification("Остановлено администратором. Ожидание команды «Старт»...")
+                // Ждём, пока админ не даст "Старт"
+                waitForStartCommand(repo)
+                // Если нас отменили — выходим
+                if (!currentCoroutineContext().isActive) return@launch
+            }
+
             val simMode = prefs.simMode
             when (simMode) {
                 SimMode.AUTO -> {
@@ -112,6 +113,43 @@ class SmsService : Service() {
         }
     }
 
+    /**
+     * Отдельная корутина — каждые 10 секунд проверяет статус в Sheets
+     * и останавливает сервис, если админ нажал "Стоп".
+     */
+    private suspend fun watchAdminCommands(repo: SheetsRepository) {
+        while (currentCoroutineContext().isActive) {
+            delay(10_000L) // каждые 10 секунд
+            if (agentRowIndex > 0 && repo.isAgentStopped(agentRowIndex)) {
+                Log.d(TAG, "watchAdminCommands: stop flag detected")
+                postNotification("Остановлено администратором")
+                stopSelf()
+                return
+            }
+        }
+    }
+
+    /**
+     * Ожидание команды "Старт" от администратора.
+     * Проверяет статус каждые 30 секунд.
+     */
+    private suspend fun waitForStartCommand(repo: SheetsRepository) {
+        postNotification("Ожидание команды «Старт»...")
+        while (currentCoroutineContext().isActive) {
+            delay(30_000L)
+            if (agentRowIndex > 0 && !repo.isAgentStopped(agentRowIndex)) {
+                // Статус изменился на "активен" — запускаем рассылку
+                postNotification("Получена команда «Старт» от администратора")
+                Log.d(TAG, "waitForStartCommand: start command received")
+                return
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Остальной код без изменений
+    // ─────────────────────────────────────────────────────────────────────────
+
     private fun buildRepository(): SheetsRepository? {
         val id        = prefs.sheetsId
         val key       = prefs.apiKey
@@ -120,18 +158,12 @@ class SmsService : Service() {
         return SheetsRepository(id, key, scriptUrl)
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Core sending loop for one SIM slot
-    // ─────────────────────────────────────────────────────────────────────────
-
     private suspend fun runSimLoop(repo: SheetsRepository, simSlot: Int) {
         Log.d(TAG, "SIM $simSlot loop started")
 
-        // Помечаем слот как активный
         if (simSlot == 0) SmsServiceState.sim1Active.postValue(true)
         else              SmsServiceState.sim2Active.postValue(true)
 
-        // Проверим, есть ли вообще SIM в этом слоте
         val subId = smsSender.getSubscriptionIdForSlot(simSlot)
         if (subId == -1) {
             Log.w(TAG, "No SIM in slot $simSlot, stopping loop for this slot")
@@ -141,7 +173,6 @@ class SmsService : Service() {
             return
         }
 
-        // Fetch initial balance from sheet
         var balance = if (agentRowIndex > 0) repo.getSimBalance(agentRowIndex, simSlot) else 0
         val senderTag = "${prefs.phoneName}_SIM${simSlot + 1}"
 
@@ -175,7 +206,7 @@ class SmsService : Service() {
                 Log.d(TAG, "SIM $simSlot: outside window, sleeping ${waitMs / 60000}m")
                 postNotification("Ожидание окна рассылки (с ${settings.startTime})")
                 SmsServiceState.event.postValue(ServiceEvent.OutsideTimeWindow)
-                delay(waitMs.coerceAtMost(60_000L)) // re-check every minute
+                delay(waitMs.coerceAtMost(60_000L))
                 continue
             }
 
@@ -214,7 +245,6 @@ class SmsService : Service() {
             val status    = if (success) Recipient.STATUS_SENT else Recipient.STATUS_ERROR
             val timestamp = TimeManager.nowTimestamp()
 
-            // ── Write result back to Sheets ───────────────────────────────
             repo.markRecipientResult(recipient.rowIndex, status, senderTag, timestamp)
 
             if (success) {
@@ -224,7 +254,6 @@ class SmsService : Service() {
                 SmsServiceState.sim2Sent.postValue(sim2Sent)
                 SmsServiceState.event.postValue(ServiceEvent.SmsSent(recipient.phone, simSlot))
 
-                // Update agent stats in Sheets (non-critical)
                 if (agentRowIndex > 0) {
                     repo.updateAgentStats(agentRowIndex, sim1Sent, sim2Sent)
                 }
@@ -235,7 +264,6 @@ class SmsService : Service() {
                 SmsServiceState.event.postValue(ServiceEvent.SmsError(recipient.phone, "Ошибка отправки"))
             }
 
-            // ── Random delay before next send ─────────────────────────────
             val delayMs = Random.nextLong(
                 settings.intervalMinSec * 1000L,
                 settings.intervalMaxSec * 1000L
@@ -244,7 +272,6 @@ class SmsService : Service() {
             delay(delayMs)
         }
 
-        // Mark this SIM as done in state
         if (simSlot == 0) SmsServiceState.sim1Active.postValue(false)
         else              SmsServiceState.sim2Active.postValue(false)
 
@@ -260,10 +287,6 @@ class SmsService : Service() {
             stopSelf()
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Notifications
-    // ─────────────────────────────────────────────────────────────────────────
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(

@@ -3,6 +3,7 @@ package com.smsapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,8 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 
 /**
  * RecyclerView adapter that shows each agent's status in the Admin screen.
+ * Supports "start agent" and "stop agent" button clicks.
  */
-class AgentAdapter : ListAdapter<Agent, AgentAdapter.AgentViewHolder>(AgentDiffCallback()) {
+class AgentAdapter(
+    private val onStartClick: (Agent) -> Unit,
+    private val onStopClick: (Agent) -> Unit
+) : ListAdapter<Agent, AgentAdapter.AgentViewHolder>(AgentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AgentViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -20,17 +25,19 @@ class AgentAdapter : ListAdapter<Agent, AgentAdapter.AgentViewHolder>(AgentDiffC
     }
 
     override fun onBindViewHolder(holder: AgentViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onStartClick, onStopClick)
     }
 
     class AgentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvName: TextView       = itemView.findViewById(R.id.tvAgentName)
-        private val tvSim1: TextView       = itemView.findViewById(R.id.tvSim1Status)
-        private val tvSim2: TextView       = itemView.findViewById(R.id.tvSim2Status)
-        private val tvLastSeen: TextView   = itemView.findViewById(R.id.tvLastSeen)
-        private val tvAgentStatus: TextView = itemView.findViewById(R.id.tvAgentStatus)
+        private val tvName: TextView          = itemView.findViewById(R.id.tvAgentName)
+        private val tvSim1: TextView          = itemView.findViewById(R.id.tvSim1Status)
+        private val tvSim2: TextView          = itemView.findViewById(R.id.tvSim2Status)
+        private val tvLastSeen: TextView      = itemView.findViewById(R.id.tvLastSeen)
+        private val tvAgentStatus: TextView   = itemView.findViewById(R.id.tvAgentStatus)
+        private val btnStartAgent: Button     = itemView.findViewById(R.id.btnStartAgent)
+        private val btnStopAgent: Button      = itemView.findViewById(R.id.btnStopAgent)
 
-        fun bind(agent: Agent) {
+        fun bind(agent: Agent, onStartClick: (Agent) -> Unit, onStopClick: (Agent) -> Unit) {
             tvName.text = agent.name
             tvSim1.text = buildString {
                 append("SIM1: ${agent.sim1Number.ifEmpty { "—" }}")
@@ -52,6 +59,14 @@ class AgentAdapter : ListAdapter<Agent, AgentAdapter.AgentViewHolder>(AgentDiffC
                 itemView.context.getColor(R.color.color_stop)
             }
             tvAgentStatus.setTextColor(color)
+
+            // Start button
+            btnStartAgent.setOnClickListener { onStartClick(agent) }
+            btnStartAgent.visibility = if (agent.agentStatus == Agent.STATUS_ACTIVE) View.GONE else View.VISIBLE
+
+            // Stop button
+            btnStopAgent.setOnClickListener { onStopClick(agent) }
+            btnStopAgent.visibility = if (agent.agentStatus == Agent.STATUS_ACTIVE) View.VISIBLE else View.GONE
         }
     }
 
